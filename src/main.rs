@@ -1,5 +1,5 @@
 mod lexer;
-mod compiler;
+mod interpreter;
 mod cli;
 
 fn main() -> () {

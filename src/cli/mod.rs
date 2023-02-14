@@ -1,7 +1,8 @@
 use clap::{Command, Arg, ArgMatches};
 use rustyline::{Editor, error::ReadlineError};
+use rainbow_text::Rainbow;
 
-use crate::compiler::compile;
+use crate::interpreter::interpret;
 
 fn read_file(path: &str) -> Option<String> {
   let contents_res: Result<String, std::io::Error> = std::fs::read_to_string(path);
@@ -15,19 +16,24 @@ fn read_file(path: &str) -> Option<String> {
 }
 
 fn run_repl() -> () {
+  let rainbow = Rainbow::default();
+  print!("Welcome to the ");
+  rainbow.write("test-lang").expect("errored for some reason");
+  println!(" REPL");
+
   let res: Result<Editor<()>, ReadlineError> = Editor::<()>::new();
   if res.is_err() { return; }
 
   let mut rl: Editor<()> = res.unwrap();
   loop {
-    let readline_res: Result<String, ReadlineError> = rl.readline(">> ");
+    let readline_res: Result<String, ReadlineError> = rl.readline("➤ ");
     match readline_res {
       Ok(line) => {
         rl.add_history_entry(line.as_str());
-        compile(line.as_str());
+        interpret(line.as_str());
       }
       Err(err) => {
-        eprintln!("Error: {:?}", err);
+        eprintln!("Exit: {:?}", err);
         break;
       }
     }

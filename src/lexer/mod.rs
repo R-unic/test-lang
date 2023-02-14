@@ -63,6 +63,27 @@ fn is_binary(state: &mut LexerState) -> bool {
   current_char(state) == '0' && char_exists(state, 1) && peek(state, 1) == 'b' && char_exists(state, 2) && peek(state, 2).is_digit(2)
 }
 
+fn skip_comments(state: &mut LexerState, multiline: bool) -> () {
+  advance(state);
+  let current_line = state.line;
+  let end_of_comment = |s: &mut LexerState| {
+    if multiline {
+      match_char(s, ':') && match_char(s, '#') && match_char(s, '#')
+    } else {
+      s.line == current_line || finished(s)
+    }
+  };
+  while !end_of_comment(state) {
+    advance(state);
+  }
+}
+
+fn skip_whitespace(state: &mut LexerState) -> () {
+  while !finished(state) && current_char(state).is_whitespace() {
+    advance(state);
+  }
+}
+
 fn read_number(state: &mut LexerState) -> () {
   let mut num_str = String::new();
   let radix: u32 = if is_hex(state) {
@@ -97,9 +118,7 @@ fn read_identifier(state: &mut LexerState) -> () {
   while !finished(state) {
     if char_exists(state, 1) && !peek(state, 1).is_ascii_alphanumeric() && peek(state, 1) != '_' && peek(state, 1) != '$' {
       ident_str += &current_char(state).to_string();
-      if peek(state, 1).is_whitespace() {
-        advance(state);
-      }
+      skip_whitespace(state);
       break;
     }
     ident_str += &advance(state).unwrap().to_string();
@@ -110,21 +129,6 @@ fn read_identifier(state: &mut LexerState) -> () {
     add_token(state, syntax_type, value);
   } else {
     add_token(state, Syntax::Identifier, Some(PossibleTokenValue::String(ident_str)));
-  }
-}
-
-fn skip_comments(state: &mut LexerState, multiline: bool) -> () {
-  advance(state);
-  let current_line = state.line;
-  let end_of_comment = |s: &mut LexerState| {
-    if multiline {
-      match_char(s, ':') && match_char(s, '#') && match_char(s, '#')
-    } else {
-      s.line == current_line || finished(s)
-    }
-  };
-  while !end_of_comment(state) {
-    advance(state);
   }
 }
 
@@ -253,7 +257,10 @@ fn lex(state: &mut LexerState) -> () {
       advance(state);
     },
     default_char => {
-      if default_char.is_whitespace() { return; }
+      if default_char.is_whitespace() {
+        skip_whitespace(state);
+        return;
+      }
 
       let is_ident: bool = default_char.is_ascii_alphabetic() || default_char == '_' || default_char == '$';
       let is_number: bool = default_char.is_digit(10) ||

@@ -250,6 +250,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rainbow-text"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a61879081484a5830a4f91aa642cf14be4c2171eea2d37080ebaff0ff8782690"
+dependencies = [
+ "termcolor",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -355,6 +364,7 @@ name = "test-lang"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "rainbow-text",
  "rustyline",
 ]
 
