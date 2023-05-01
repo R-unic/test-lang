@@ -153,7 +153,7 @@ impl Lexer {
         break
       }
     }
-    self.add_token(Syntax::Char, Some(PossibleTokenValue::String(res_str)));
+    self.add_token(Syntax::Char, Some(PossibleTokenValue::Char(res_str.chars().next().unwrap())));
   }
 
   fn read_identifier(&mut self) -> () {
