@@ -1,7 +1,8 @@
-use crate::{lexer::{tokenize}, lexer::token::Token};
+use crate::{lexer::{Lexer, token::Token}};
 
 pub fn interpret(source: &str) {
-  let tokens: Vec<Token> = tokenize(&source);
+  let mut lexer = Lexer::new(&source);
+  let tokens: &Vec<Token> = lexer.tokenize();
   for token in tokens.iter() {
     println!("{}", token.to_string());
   }
