@@ -9,6 +9,8 @@ pub enum PossibleTokenValue {
     None(())
 }
 
+#[derive(Debug, Clone)]
+
 pub struct Token {
   pub syntax_type: Syntax,
   pub value: Option<PossibleTokenValue>,

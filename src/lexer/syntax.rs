@@ -1,4 +1,4 @@
-#[derive(Copy, Clone, std::fmt::Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum Syntax {
   Identifier, Float, String, Char, Boolean, None,
 
