@@ -6,4 +6,8 @@ pub fn interpret(source: &str) {
   for token in tokens.iter() {
     println!("{}", token.to_string());
   }
+
+  if lexer.logger.errored {
+    return;
+  }
 }

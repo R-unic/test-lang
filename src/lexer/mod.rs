@@ -4,7 +4,7 @@ mod keywords;
 
 use std::num::ParseFloatError;
 
-use super::logger::{LOGGER};
+use crate::logger::Logger;
 use self::keywords::{is_keyword, get_keyword_syntax, get_keyword_value};
 use self::syntax::Syntax;
 use self::token::{Token, PossibleTokenValue};
@@ -18,25 +18,27 @@ fn f64_from_str(s: &str, radix: u32) -> Result<f64, ParseFloatError> {
 }
 
 pub struct Lexer {
-  current: usize,
+  position: usize,
   line: usize,
   chars: Vec<char>,
-  tokens: Vec<Token>
+  tokens: Vec<Token>,
+  pub logger: Logger
 }
 
 impl Lexer {
   pub fn new(source: &str) -> Self {
     Self {
-      current: 0,
+      position: 0,
       line: 1,
       tokens: vec![],
-      chars: source.chars().collect()
+      chars: source.chars().collect(),
+      logger: Logger::new()
     }
   }
 
     /// make sure finished() returns false when using!
   fn peek(&self, offset: usize) -> char {
-    self.chars.get(self.current + offset).copied().unwrap()
+    self.chars.get(self.position + offset).copied().unwrap()
   }
 
   fn current_char(&self) -> char {
@@ -52,17 +54,17 @@ impl Lexer {
   }
 
   fn finished(&self) -> bool {
-    self.current >= self.chars.len()
+    self.position >= self.chars.len()
   }
 
   /// you probably don't want to use this, use finished()
   fn char_exists(&self, offset: usize) -> bool {
-    self.chars.get(self.current + offset).copied().is_some()
+    self.chars.get(self.position + offset).copied().is_some()
   }
 
   fn advance(&mut self) -> Option<&char> {
-    let char: Option<&char> = self.chars.get(self.current);
-    self.current += 1;
+    let char: Option<&char> = self.chars.get(self.position);
+    self.position += 1;
     char
   }
 
@@ -147,7 +149,7 @@ impl Lexer {
     while !self.finished() && self.current_char() != delim {
       res_str += &self.advance().unwrap().to_string();
       if res_str.len() > 1 {
-        LOGGER.report_error("Character overflow", "Character literal has more than one character");
+        self.logger.report_error("Character overflow", "Character literal has more than one character", self.position, self.line);
         break
       }
     }
@@ -314,11 +316,11 @@ impl Lexer {
         } else if is_ident {
           self.read_identifier();
         } else {
-          LOGGER.report_error("Unexpected character", &default_char.to_string());
+          self.logger.report_error("Unexpected character", Box::leak(default_char.to_string().into_boxed_str()), self.position, self.line);
         }
       }
     }
-    self.current += 1;
+    self.position += 1;
   }
 
   pub fn tokenize(&mut self) -> &Vec<Token> {
