@@ -4,6 +4,7 @@ mod keywords;
 
 use std::num::ParseFloatError;
 
+use super::logger::{LOGGER};
 use self::keywords::{is_keyword, get_keyword_syntax, get_keyword_value};
 use self::syntax::Syntax;
 use self::token::{Token, PossibleTokenValue};
@@ -113,6 +114,18 @@ fn read_string(state: &mut LexerState, delim: char) -> () {
   add_token(state, Syntax::String, Some(PossibleTokenValue::String(res_str)));
 }
 
+fn read_char(state: &mut LexerState, delim: char) -> () {
+  advance(state);
+  let mut res_str = String::new();
+  while !finished(state) && current_char(state) != delim {
+    res_str += &advance(state).unwrap().to_string();
+    if res_str.len() > 1 {
+
+    }
+  }
+  add_token(state, Syntax::Char, Some(PossibleTokenValue::String(res_str)));
+}
+
 fn read_identifier(state: &mut LexerState) -> () {
   let mut ident_str = String::new();
   while !finished(state) {
@@ -124,7 +137,7 @@ fn read_identifier(state: &mut LexerState) -> () {
     ident_str += &advance(state).unwrap().to_string();
   }
   if is_keyword(&ident_str) {
-    let syntax_type = get_keyword_syntax(&ident_str).unwrap();
+    let syntax_type = get_keyword_syntax(&ident_str);
     let value = get_keyword_value(&ident_str);
     add_token(state, syntax_type, value);
   } else {
@@ -153,7 +166,8 @@ fn lex(state: &mut LexerState) -> () {
     ';' => { advance(state); },
 
     '\n' => state.line += 1,
-    '"' | '\'' => read_string(state, char),
+    '"' => read_string(state, char),
+    '\'' => read_char(state, char),
 
     '#' => if match_char(state, '#') {
       let is_multiline = match_char(state, ':');
@@ -161,8 +175,13 @@ fn lex(state: &mut LexerState) -> () {
     } else {
       add_token(state, Syntax::Hashtag, None);
     },
-    ':' => if match_char(state, ':') {
-      add_token(state, Syntax::ColonColon, None)
+    ':' => {
+      if match_char(state, ':') {
+        add_token(state, Syntax::ColonColon, None);
+      } else {
+        add_token(state, Syntax::Colon, None);
+      }
+      advance(state);
     },
     '+' => {
       if match_char(state, '=') {
@@ -175,6 +194,8 @@ fn lex(state: &mut LexerState) -> () {
     '-' => {
       if match_char(state, '=') {
         add_token(state, Syntax::MinusEqual, None);
+      } else if match_char(state, '>') {
+        add_token(state, Syntax::HyphenArrow, None);
       } else {
         add_token(state, Syntax::Minus, None);
       }
@@ -272,7 +293,7 @@ fn lex(state: &mut LexerState) -> () {
       } else if is_ident {
         read_identifier(state);
       } else {
-        panic!("Unexpected character: {}", default_char);
+        LOGGER.report_error("Unexpected character", &default_char.to_string());
       }
     }
   }

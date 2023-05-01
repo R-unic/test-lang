@@ -1,3 +1,4 @@
+mod logger;
 mod lexer;
 mod interpreter;
 mod cli;

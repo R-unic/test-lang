@@ -1,70 +1,14 @@
+#[derive(Copy, Clone, std::fmt::Debug)]
 pub enum Syntax {
-  Identifier, Float, String, Boolean, None,
+  Identifier, Float, String, Char, Boolean, None,
 
   Plus, PlusEqual, Minus, MinusEqual, Star, StarEqual, Slash, SlashEqual, Carat, CaratEqual, Percent, PercentEqual,
   Less, LessEqual, Greater, GreaterEqual, Equal, EqualEqual, Bang, BangEqual,
   Ampersand, Pipe, PipeEqual,
-  ColonColon, Dot, LeftBrace, RightBrace, LeftBracket, RightBracket, LeftParen, RightParen, Comma,
-  Hashtag,
+  ColonColon, Colon, Dot, LeftBrace, RightBrace, LeftBracket, RightBracket, LeftParen, RightParen, Comma,
+  Hashtag, HyphenArrow,
 
-  Function, If, Else, For, ForEach, While, Global, Break, Next, Match,
+  Function, If, Else, For, ForEach, While, Global, Constant, Break, Next, Match,
 
   EOF,
-}
-
-impl std::fmt::Debug for Syntax {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    let mut w = |name: &str| write!(f, "{}", name);
-    match self {
-      Self::Identifier => w("Identifier"),
-      Self::Float => w("Float"),
-      Self::String => w("String"),
-      Self::Boolean => w("Boolean"),
-      Self::Plus => w("Plus"),
-      Self::Minus => w("Minus"),
-      Self::Star => w("Star"),
-      Self::Slash => w("Slash"),
-      Self::Carat => w("Carat"),
-      Self::Percent => w("Percent"),
-      Self::Less => w("Less"),
-      Self::LessEqual => w("LessEqual"),
-      Self::Greater => w("Greater"),
-      Self::GreaterEqual => w("GreaterEqual"),
-      Self::Equal => w("Equal"),
-      Self::EqualEqual => w("EqualEqual"),
-      Self::BangEqual => w("BangEqual"),
-      Self::Ampersand => w("Ampersand"),
-      Self::Pipe => w("Pipe"),
-      Self::Bang => w("Bang"),
-      Self::Hashtag => w("Hashtag"),
-      Self::EOF => w("EOF"),
-      Self::ColonColon => w("ColonColon"),
-      Self::Dot => w("Dot"),
-      Self::None => w("None"),
-      Self::Function => w("Function"),
-      Self::If => w("If"),
-      Self::Else => w("Else"),
-      Self::For => w("For"),
-      Self::ForEach => w("ForEach"),
-      Self::While => w("While"),
-      Self::Global => w("Global"),
-      Self::Break => w("Break"),
-      Self::Next => w("Next"),
-      Self::Match => w("Match"),
-      Self::PlusEqual => w("PlusEqual"),
-      Self::MinusEqual => w("MinusEqual"),
-      Self::StarEqual => w("StarEqual"),
-      Self::SlashEqual => w("SlashEqual"),
-      Self::CaratEqual => w("CaratEqual"),
-      Self::PercentEqual => w("PercentEqual"),
-      Self::PipeEqual => w("PipeEqual"),
-      Self::LeftBrace => w("LeftBrace"),
-      Self::RightBrace => w("RightBrace"),
-      Self::LeftBracket => w("LeftBracket"),
-      Self::RightBracket => w("RightBracket"),
-      Self::LeftParen => w("LeftParen"),
-      Self::RightParen => w("RightParen"),
-      Self::Comma => w("Comma"),
-    }
-  }
 }
