@@ -1,6 +1,7 @@
 #[derive(Copy, Clone, Debug)]
 pub enum Syntax {
-  Identifier, Float, String, Char, Boolean, None,
+  TypeIdentifier, Identifier, Float, String, Char, Boolean, None,
+  FloatType, StringType, CharType, BooleanType, VoidType, NoneType,
 
   Plus, PlusEqual, Minus, MinusEqual, Star, StarEqual, Slash, SlashEqual, Carat, CaratEqual, Percent, PercentEqual,
   Less, LessEqual, Greater, GreaterEqual, Equal, EqualEqual, Bang, BangEqual,

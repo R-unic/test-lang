@@ -5,7 +5,9 @@ pub enum PossibleTokenValue {
     // Integer(i64),
     Float(f64),
     String(String),
+    Char(char),
     Boolean(bool),
+    Type(String),
     None(())
 }
 

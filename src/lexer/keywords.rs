@@ -22,6 +22,29 @@ pub fn get_keywords() -> HashMap<&'static str, Syntax> {
   keywords
 }
 
+pub fn get_type_keywords() -> HashMap<&'static str, Syntax> {
+  let types: HashMap<&str, Syntax> = [
+    ("bool", Syntax::BooleanType),
+    ("string", Syntax::StringType),
+    ("char", Syntax::CharType),
+    ("float", Syntax::FloatType),
+    ("void", Syntax::VoidType),
+    ("none", Syntax::NoneType),
+  ].into();
+
+  types
+}
+
+pub fn is_type_keyword(s: &str) -> bool {
+  let types = &get_type_keywords();
+  types.contains_key(&s)
+}
+
+pub fn get_type_syntax(s: &str) -> Syntax {
+  let types = &get_type_keywords();
+  *types.get(s).expect(&format!("Invalid type keyword {}", s))
+}
+
 pub fn is_keyword(s: &str) -> bool {
   let keywords = &get_keywords();
   keywords.contains_key(&s)

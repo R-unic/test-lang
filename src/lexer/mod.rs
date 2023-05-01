@@ -5,7 +5,7 @@ mod keywords;
 use std::num::ParseFloatError;
 
 use crate::logger::Logger;
-use self::keywords::{is_keyword, get_keyword_syntax, get_keyword_value};
+use self::keywords::{is_keyword, get_keyword_syntax, get_keyword_value, is_type_keyword, get_type_syntax};
 use self::syntax::Syntax;
 use self::token::{Token, PossibleTokenValue};
 
@@ -170,6 +170,9 @@ impl Lexer {
       let syntax_type = get_keyword_syntax(&ident_str);
       let value = get_keyword_value(&ident_str);
       self.add_token(syntax_type, value);
+    } else if is_type_keyword(&ident_str) {
+      let syntax_type = get_type_syntax(&ident_str);
+      self.add_token(syntax_type, Some(PossibleTokenValue::Type(ident_str)));
     } else {
       self.add_token(Syntax::Identifier, Some(PossibleTokenValue::String(ident_str)));
     }
